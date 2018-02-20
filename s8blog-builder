@@ -1,0 +1,104 @@
+<?php if ($content == 'blog'): ?>
+    <?php																					
+	      
+        // Get options from backend
+        $cols = 12 / $number_columns;
+        $content = get_sub_field('content_type');
+				$post_cats = get_sub_field('post_categories');
+			  $post_tags = get_sub_field('post_tags');
+				$number_posts = get_sub_field('number_of_posts');
+				$number_columns = get_sub_field('number_of_columns');
+				$offset = get_sub_field('post_offset');
+				$thumb_size = get_sub_field('thumbnail_size');
+				$orderby = get_sub_field('order_by');
+        
+        // Is it infinite scroll
+				if (get_sub_field( 'infinite' )) {
+						$msry_wrap = 'msry-grid';
+						$msry_item = 'msry-grid-item';
+						$msry_item_content = 'msry-item-content';
+				}
+										
+				if(is_front_page()){
+						$paged = ( get_query_var('page') ) ? get_query_var('page') : 1;
+				} else {
+						$paged = ( get_query_var('paged') ) ? get_query_var('paged') : 1;	
+				}	
+				
+        // Arguments for the loop
+				$args = array(
+				  	'posts_per_page'         => $number_posts,
+						'tag__in'				 => $post_tags,
+						'offset'				 => $offset,
+						'orderby'				 => $orderby,
+						'paged' 				 => $paged,
+						'page' 					 => $paged,
+						'tax_query' 			 => array(
+							 	 'relation'	 => 'OR',
+					     			  array (
+											    'taxonomy'	=> 'category',
+												  'field'		=> 'term_id',
+													'terms'     => $post_cats
+											),
+									)
+				);
+	
+				// The Query
+				$the_query = new WP_Query( $args );
+
+				// The Loop
+				if ( $the_query->have_posts() ) {
+						echo '<div class="blog_query ' . $msry_wrap . '">';
+				if (get_sub_field( 'infinite' )) {
+						echo '<div class="msry-grid-sizer col-md-<?php echo $cols; ?>"></div>'; //Required for responsive masonry layout
+				}
+				$i = 1;
+				    while ( $the_query->have_posts() ) {
+						$the_query->the_post();
+          
+						    																				
+						$output = '';
+                
+            // Adding twitter feed block after the fifth post
+						    if ($i === 5 && get_sub_field( 'infinite' ) && $paged === 1){
+                    get_template_part('loop_masonry');
+                    get_template_part('twitter_block');
+						
+            // Adding call-to-action block after the second post of the odd page loads
+							  } elseif ($i === 2 && get_sub_field( 'infinite' ) && $paged % 2 == 1){
+										get_template_part('loop_masonry');
+                    get_template_part('odd_cta_block');
+                 
+            // Adding call-to-action block after the second post of the even page loads    
+								} elseif ($i === 3 && get_sub_field( 'infinite' ) && $paged %2 == 0){
+										get_template_part('loop_masonry');
+                    get_template_part('even_cta_block');				
+																		
+								} else {
+									  get_template_part('loop_masonry');
+								}
+																									
+								echo $output;
+								$i++;
+								}
+											
+								echo '</div>';	
+                
+                    //Infinite scroll thingy
+                    if ($the_query->max_num_pages > 1 && get_sub_field( 'infinite' )) { ?>
+                      <nav class="navg">
+                          <?php echo get_next_posts_link( 'Older Entries', $the_query->max_num_pages ); ?>  
+                      </nav>
+                    <?php }
+									  
+										wp_reset_postdata();
+
+										} else {
+											// no posts found
+										}
+									?>					
+							<?php endif; ?>
+						</div>
+					<?php //endif; ?>				
+					<?php endwhile; ?>
+				<?php endif; ?>
