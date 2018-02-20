@@ -1,5 +1,6 @@
 function ed_ajax_product_filter_function(){
 	
+	// GET THE USER SELECTION
 	$prod_cat_filter = $_POST['prod_cat_filt'];
 	$prod_pac_filter = $_POST['prod_pac_filt']; 
 					
@@ -7,7 +8,10 @@ function ed_ajax_product_filter_function(){
 		'post_type' => 's8products',
 		'posts_per_page' => -1,
 	);
-  
+        
+	// DIFFERENT SCENARIOS BASED ON THE CHECKBOX
+	// IF ONE CATEGORY IS SELECTED AND NOT THE OTHER, UNSELECTED CATEGORY SHOULD ACT LIKE ALL OF THEM ARE CHECKED
+	
 	if( isset( $_POST['prod_cat_filt'] ) && !isset( $_POST['prod_pac_filt'] ))	
 		$args['tax_query'] = array(
 			array(
@@ -50,11 +54,13 @@ function ed_ajax_product_filter_function(){
 			$post = $query->post; 
 			$prd_image = get_field('primary_product_image'); ?>
       
-			<div class="a360product col-md-4 col-sm-6" data-prd-id="<?php echo $post->ID; ?>" data-slug="<?php echo $post->post_name; ?>">
-				<div class="a360product_image"><img src="<?php echo $prd_image['sizes']['thumbnail']; ?>" alt="<?php echo $prd_image['alt']; ?>" /></div>
+			<div class="product col-md-4 col-sm-6" data-prd-id="<?php echo $post->ID; ?>" data-slug="<?php echo $post->post_name; ?>">
+				<div class="product_image"><img src="<?php echo $prd_image['sizes']['thumbnail']; ?>" alt="<?php echo $prd_image['alt']; ?>" /></div>
 				<h3><?php echo $post->post_title; ?></h3>
 				<p><?php echo $post->post_excerpt; ?></p>
+				
 				<?php $term_list = wp_get_post_terms($post->ID, 'product_package', array("fields" => "all")); ?>
+				
 				<?php foreach ( $term_list as $term ) : ?>
 					<span class="pck_clr" style="background-color: <?php the_field('package_color', $term); ?>"></span>
 				<?php endforeach; ?>								
@@ -62,8 +68,8 @@ function ed_ajax_product_filter_function(){
       
 		<?php endwhile; 	
 		wp_reset_postdata();
-	  //else :
-		//echo "We don't have any products matching your criteria.";
+	else :
+		echo "We don't have any products matching your criteria.";
 	endif;
 
 	die();
