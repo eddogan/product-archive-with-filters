@@ -1,0 +1,29 @@
+function social_media(){
+		$output = '<div class="social_icons">';
+	if (get_theme_mod(social_facebook) == 1) {
+		$output.= '<a href=' . get_theme_mod('facebook_link', '1') . ' target="_blank"><i class="fa fa-facebook" aria-hidden="true"></i>Facebook</a>';
+	}
+	if (get_theme_mod(social_twitter) == 1) {
+		$output.= '<a href=' . get_theme_mod('twitter_link', '1') . ' target="_blank"><i class="fa fa-twitter" aria-hidden="true"></i>Twittter</a>';
+	}
+	if (get_theme_mod(social_linkedin) == 1) {
+		$output.= '<a href=' . get_theme_mod('linkedin_link', '1') . ' target="_blank"><i class="fa fa-linkedin" aria-hidden="true"></i>LinkedIn</a>';
+	}
+	if (get_theme_mod(social_googleplus) == 1) {
+		$output.= '<a href=' . get_theme_mod('googleplus_link', '1') . ' target="_blank"><i class="fa fa-google-plus" aria-hidden="true"></i>GooglePlus</a>';
+	}
+	if (get_theme_mod(social_youtube) == 1) {
+		$output.= '<a href=' . get_theme_mod('youtube_link', '1') . ' target="_blank"><i class="fa fa-youtube" aria-hidden="true"></i>Youtube</a>';
+	}
+	if (get_theme_mod(social_instagram) == 1) {
+		$output.= '<a href=' . get_theme_mod('instagram_link', '1') . ' target="_blank"><i class="fa fa-instagram" aria-hidden="true"></i>Instagram</a>';
+	}
+	if (get_theme_mod(social_pinterest) == 1) {	
+		$output.= '<a href=' . get_theme_mod('pinterest_link', '1') . ' target="_blank"><i class="fa fa-pinterest" aria-hidden="true"></i>Pinterest</a>';
+	}
+    	$output.= '</div>';
+
+	return $output;
+}
+add_action( 'social', 'social_media' );
+add_shortcode( 'social', 'social_media' );
